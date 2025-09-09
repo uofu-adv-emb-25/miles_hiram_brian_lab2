@@ -20,6 +20,9 @@ endif()
 pico_enable_stdio_uart(mytest 0)
 pico_enable_stdio_usb(mytest 1)
 
+# Produce .uf2/.bin/.elf
+pico_add_extra_outputs(mytest)
+
 # This will speed up the simulation, since data won't be copied from the flash controller.
 # It does make the binary non-persistent on a real microcontroller.
 # pico_set_binary_type(mytest no_flash)
