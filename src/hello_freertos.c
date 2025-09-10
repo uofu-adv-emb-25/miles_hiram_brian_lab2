@@ -26,7 +26,7 @@ void blink_task(__unused void *params)
     // Ensure device was properly initialized
     hard_assert(cyw43_arch_init() == PICO_OK);
 
-    // Toggle LED twice every second, except after the 6th blink wait a full second
+    // Toggle LED twice every second, except after the 5th blink wait a full second
     while (true)
     {
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
