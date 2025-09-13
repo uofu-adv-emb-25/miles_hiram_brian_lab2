@@ -39,7 +39,7 @@ void main_task(__unused void *params)
     // Continuously read from serial input and convert uppercase to
     // lowercase and vise versa
     char c;
-    while (c = getchar()) { print_change_case(c); }
+    while (c = getchar()) { putchar(change_case(c)); }
 }
 
 int main(void)
