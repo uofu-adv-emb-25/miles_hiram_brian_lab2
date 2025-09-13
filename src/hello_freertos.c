@@ -17,11 +17,6 @@
 int count = 0;   // LED toggle count
 bool on = false; // LED boolean flag
 
-#define MAIN_TASK_PRIORITY (tskIDLE_PRIORITY + 1UL)
-#define BLINK_TASK_PRIORITY (tskIDLE_PRIORITY + 2UL)
-#define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
-#define BLINK_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
-
 void blink_task(__unused void *params)
 {
     // Ensure device was properly initialized
@@ -30,7 +25,8 @@ void blink_task(__unused void *params)
     // Toggle LED twice every second, except after the 5th blink wait a full second
     while (true) 
     { 
-        on = iter_LED_toggle(&count, on); 
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
+        iter_LED_toggle(&count, &on); 
         vTaskDelay(500);
     }
 }
