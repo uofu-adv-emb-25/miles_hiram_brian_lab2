@@ -2,14 +2,14 @@
 #include "pico/cyw43_arch.h"
 
 
-void print_change_case(char c)
+char change_case(char c)
 {
     if (c <= 'z' && c >= 'a')
-        putchar(c - 32);
+        return (c - 32);
     else if (c >= 'A' && c <= 'Z')
-        putchar(c + 32);
+        return (c + 32);
     else
-        putchar(c);
+        return c;
 }
 
 
