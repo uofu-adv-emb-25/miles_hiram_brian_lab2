@@ -8,6 +8,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "hello_freertos_funcs.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -27,11 +28,9 @@ void blink_task(__unused void *params)
     hard_assert(cyw43_arch_init() == PICO_OK);
 
     // Toggle LED twice every second, except after the 5th blink wait a full second
-    while (true)
-    {
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
-        if (count++ % 11)
-            on = !on;
+    while (true) 
+    { 
+        on = iter_LED_toggle(&count, on); 
         vTaskDelay(500);
     }
 }
@@ -44,15 +43,7 @@ void main_task(__unused void *params)
     // Continuously read from serial input and convert uppercase to
     // lowercase and vise versa
     char c;
-    while (c = getchar())
-    {
-        if (c <= 'z' && c >= 'a')
-            putchar(c - 32);
-        else if (c >= 'A' && c <= 'Z')
-            putchar(c + 32);
-        else
-            putchar(c);
-    }
+    while (c = getchar()) { print_change_case(c); }
 }
 
 int main(void)
