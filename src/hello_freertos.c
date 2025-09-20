@@ -8,45 +8,48 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "hello_freertos_funcs.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "pico/cyw43_arch.h"
 
-int count = 0;
-bool on = false;
+int count = 0;   // LED toggle count
+bool on = false; // LED boolean flag
 
-#define MAIN_TASK_PRIORITY      ( tskIDLE_PRIORITY + 1UL )
-#define BLINK_TASK_PRIORITY     ( tskIDLE_PRIORITY + 2UL )
-#define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
-#define BLINK_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
-
-void blink_task(__unused void *params) {
+void blink_task(__unused void *params)
+{
+    // Ensure device was properly initialized
     hard_assert(cyw43_arch_init() == PICO_OK);
-    while (true) {
+
+    // Toggle LED twice every second, except after the 5th blink wait a full second
+    while (true) 
+    { 
         cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
-        if (count++ % 11) on = !on;
+        iter_LED_toggle(&count, &on); 
         vTaskDelay(500);
     }
 }
 
-void main_task(__unused void *params) {
+void main_task(__unused void *params)
+{
+    // Start blink thread
     xTaskCreate(blink_task, "BlinkThread",
                 BLINK_TASK_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
+    // Continuously read from serial input and convert uppercase to
+    // lowercase and vise versa
     char c;
-    while(c = getchar()) {
-        if (c <= 'z' && c >= 'a') putchar(c - 32);
-        else if (c >= 'A' && c <= 'Z') putchar(c + 32);
-        else putchar(c);
-    }
+    while (c = getchar()) { putchar(change_case(c)); }
 }
 
-int main( void )
+int main(void)
 {
     stdio_init_all();
     const char *rtos_name;
     rtos_name = "FreeRTOS";
     TaskHandle_t task;
+
+    // Create and start main thread
     xTaskCreate(main_task, "MainThread",
                 MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, &task);
     vTaskStartScheduler();

@@ -1,4 +1,7 @@
-add_executable(mytest test.c unity_config.c)
+add_executable(mytest hello_freertos_test.c 
+  unity_config.c 
+  ../src/hello_freertos_funcs.c
+)
 
 target_link_libraries(mytest PRIVATE
   pico_stdlib
@@ -19,6 +22,9 @@ endif()
 # These are mutually exclusive, only set one.
 pico_enable_stdio_uart(mytest 0)
 pico_enable_stdio_usb(mytest 1)
+
+# Produce .uf2/.bin/.elf
+pico_add_extra_outputs(mytest)
 
 # This will speed up the simulation, since data won't be copied from the flash controller.
 # It does make the binary non-persistent on a real microcontroller.
